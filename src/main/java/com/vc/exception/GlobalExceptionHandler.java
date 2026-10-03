@@ -12,95 +12,47 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(
-            InvalidRefreshTokenException.class
-    )
-    public ResponseEntity<ErrorResponse>
-    handleInvalidRefreshToken(
-            InvalidRefreshTokenException exception,
-            HttpServletRequest request
-    ) {
-        ErrorResponse errorResponse =
-                new ErrorResponse(
-                        LocalDateTime.now(),
-                        HttpStatus.UNAUTHORIZED.value(),
-                        HttpStatus.UNAUTHORIZED
-                                .getReasonPhrase(),
-                        exception.getMessage(),
-                        request.getRequestURI()
-                );
+	@ExceptionHandler(InvalidRefreshTokenException.class)
+	public ResponseEntity<ErrorResponse> handleInvalidRefreshToken(InvalidRefreshTokenException exception,
+			HttpServletRequest request) {
+		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), 
+														HttpStatus.UNAUTHORIZED.value(),
+														HttpStatus.UNAUTHORIZED.getReasonPhrase(), 
+														exception.getMessage(), 
+														request.getRequestURI());
 
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(errorResponse);
-    }
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+	}
 
-    @ExceptionHandler(
-            org.springframework.security
-                    .authentication
-                    .BadCredentialsException.class
-    )
-    public ResponseEntity<ErrorResponse>
-    handleBadCredentials(
-            Exception exception,
-            HttpServletRequest request
-    ) {
-        ErrorResponse errorResponse =
-                new ErrorResponse(
-                        LocalDateTime.now(),
-                        HttpStatus.UNAUTHORIZED.value(),
-                        HttpStatus.UNAUTHORIZED
-                                .getReasonPhrase(),
-                        "Invalid email or password",
-                        request.getRequestURI()
-                );
+	@ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+	public ResponseEntity<ErrorResponse> handleBadCredentials(org.springframework.security.authentication.BadCredentialsException exception, HttpServletRequest request) {
+	    // CHANGE: Pass exception.getMessage() instead of the hardcoded string
+	    ErrorResponse errorResponse = new ErrorResponse(
+	            LocalDateTime.now(), 
+	            HttpStatus.UNAUTHORIZED.value(),
+	            HttpStatus.UNAUTHORIZED.getReasonPhrase(), 
+	            exception.getMessage(), // This will now correctly pass "User account is disabled"
+	            request.getRequestURI()
+	    );
 
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(errorResponse);
-    }
+	    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+	}
 
-    @ExceptionHandler(
-            MissingRequestCookieException.class
-    )
-    public ResponseEntity<ErrorResponse>
-    handleMissingCookie(
-            MissingRequestCookieException exception,
-            HttpServletRequest request
-    ) {
-        ErrorResponse errorResponse =
-                new ErrorResponse(
-                        LocalDateTime.now(),
-                        HttpStatus.UNAUTHORIZED.value(),
-                        HttpStatus.UNAUTHORIZED
-                                .getReasonPhrase(),
-                        "Refresh token is missing",
-                        request.getRequestURI()
-                );
+	@ExceptionHandler(MissingRequestCookieException.class)
+	public ResponseEntity<ErrorResponse> handleMissingCookie(MissingRequestCookieException exception,
+			HttpServletRequest request) {
+		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(),
+				HttpStatus.UNAUTHORIZED.getReasonPhrase(), "Refresh token is missing", request.getRequestURI());
 
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(errorResponse);
-    }
-    
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse>
-    handleGeneralException(
-            Exception exception,
-            HttpServletRequest request
-    ) {
-        ErrorResponse errorResponse =
-                new ErrorResponse(
-                        LocalDateTime.now(),
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        HttpStatus.INTERNAL_SERVER_ERROR
-                                .getReasonPhrase(),
-                        "An unexpected error occurred",
-                        request.getRequestURI()
-                );
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+	}
 
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(errorResponse);
-    }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorResponse> handleGeneralException(Exception exception, HttpServletRequest request) {
+		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+				HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), "An unexpected error occurred",
+				request.getRequestURI());
+
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+	}
 }

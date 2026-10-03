@@ -18,7 +18,7 @@ public class CorsConfig  {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",
-                "https://your-angular-app.vercel.app"
+                "https://vedanta-comp-ang.vercel.app"
         ));
 
         configuration.setAllowedMethods(Arrays.asList(
